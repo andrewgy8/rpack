@@ -9,6 +9,10 @@ pub struct Packing {
 
 impl Packing {
 
+    pub fn new(bin_size: u32) -> Packing {
+        Packing{ bin_size }
+    }
+
     pub fn pack_bins(&mut self, mut packages: Vec<u32>) -> Vec<Bin>{
     	let mut bins: Vec<Bin> = vec![];
 
@@ -50,6 +54,24 @@ mod tests {
     
     use Packing;
     use Bin;
+
+    #[test]
+    fn returns_bins_packed_when_called_with_new_method() {
+        let packages = vec![2, 4, 4, 2, 2, 2, 6, 1, 1, 6, 4, 6, 1, 1];
+        let expected = vec![
+            Bin{contents:vec![6]}, 
+            Bin{contents:vec![6]}, 
+            Bin{contents:vec![6]}, 
+            Bin{contents:vec![4, 2]}, 
+            Bin{contents:vec![4, 2]}, 
+            Bin{contents:vec![4, 2]}, 
+            Bin{contents:vec![2, 1, 1, 1, 1]}
+        ];
+        let mut packing = Packing::new(6);
+        let packed_bins = packing.pack_bins(packages);
+        
+        assert_eq!(packed_bins, expected);
+    }
 
     #[test]
     fn returns_bins_packed_with_best_size() {
