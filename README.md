@@ -14,7 +14,7 @@
     ];
 
     let mut packing = Packing{bin_size: 6};
-    let packed_bins = packing.pack_bins(rectangles);
+    let packed_bins = packing.pack_bins(packages);
     
     assert_eq!(packed_bins, expected);
 
