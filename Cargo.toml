@@ -1,6 +1,11 @@
 [package]
-name = "binpacking"
+name = "rpack"
 version = "0.1.0"
 authors = ["Andrew Graham-Yooll <andrewgy8@gmail.com>"]
+description = "Packing algorithm implmentation"
+license = "MIT"
+license-file = "LICENSE.md"
+homepage = "https://github.com/andrewgy8/rpack"
+repository = "https://github.com/andrewgy8/rpack"
 
 [dependencies]
