@@ -4,14 +4,14 @@ pub struct Bin {
 }
 
 pub struct Packing {
-    bin_size: u32
+    pub bin_size: u32
 }
 
 impl Packing {
 
-    fn pack_bins(&mut self, mut packages: Vec<u32>) -> Vec<Bin>{
+    pub fn pack_bins(&mut self, mut packages: Vec<u32>) -> Vec<Bin>{
     	let mut bins: Vec<Bin> = vec![];
-        
+
     	packages.sort_by(|a, b| b.cmp(a));
 
     	if self.bin_size < *packages.iter().max().unwrap() {

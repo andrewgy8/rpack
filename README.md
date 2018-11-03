@@ -1,6 +1,5 @@
 # rpack
 [![Build Status](https://travis-ci.org/andrewgy8/rpack.svg?branch=master)](https://travis-ci.org/andrewgy8/rpack)
-[![Crates.io](https://img.shields.io/crates/v/rustc-serialize.svg)](https://crates.io/crates/rpack)
 
 1D packing algorithm implementation written in Rust.
 
