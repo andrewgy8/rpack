@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andrewgy8/rpack.svg?branch=master)](https://travis-ci.org/andrewgy8/rpack)
+
 # rpack
 
 1D packing algorithm written in Rust.
@@ -6,13 +8,9 @@
 
 TBD
 
-### Development
-
-TBD
-
 ## Running the tests
 
-Explain how to run the automated tests for this system
+	cargo test
 
 ## Versioning
 
