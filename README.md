@@ -1,16 +1,28 @@
-[![Build Status](https://travis-ci.org/andrewgy8/rpack.svg?branch=master)](https://travis-ci.org/andrewgy8/rpack)
-
 # rpack
+[![Build Status](https://travis-ci.org/andrewgy8/rpack.svg?branch=master)](https://travis-ci.org/andrewgy8/rpack)
+[![Crates.io](https://img.shields.io/crates/v/rustc-serialize.svg)](https://crates.io/crates/rpack)
 
-1D packing algorithm written in Rust.
+1D packing algorithm implementation written in Rust.
 
-## Getting Started
+## Usage
 
-TBD
+	let packages = vec![6, 4, 2, 2, 1, 1, 1, 1, 1];
+    let expected = vec![
+    	Bin{contents:vec![6]}, 
+    	Bin{contents:vec![4, 2]}, 
+    	Bin{contents:vec![2, 1, 1, 1, 1]},
+    	Bin{contents:vec![1]}
+    ];
+
+    let mut packing = Packing{bin_size: 6};
+    let packed_bins = packing.pack_bins(rectangles);
+    
+    assert_eq!(packed_bins, expected);
 
 ## Running the tests
 
-	cargo test
+	$ cargo test
+	$ cargo clippy
 
 ## Versioning
 
