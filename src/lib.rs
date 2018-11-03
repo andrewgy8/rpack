@@ -1,7 +1,11 @@
+/// Bin type for the packing output  
+///
+/// Bin.contents contains a `Vec`, representing the contents of that packed bin.
 #[derive(Debug, PartialEq)]
 pub struct Bin {
-    contents: Vec<u32>
+    pub contents: Vec<u32>
 }
+
 
 pub struct Packing {
     pub bin_size: u32
@@ -9,10 +13,47 @@ pub struct Packing {
 
 impl Packing {
 
+    /// Constructs a new `Packing` instance 
+    ///
+    /// Requires a `bin_size<u32>` which will be the max size that any bin 
+    /// can fit.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rpack::Packing;
+    ///
+    /// let packing = Packing::new(5);
+    /// ```
+    ///
+    /// `packing` will have a bin size of 5.
     pub fn new(bin_size: u32) -> Packing {
         Packing{ bin_size }
     }
 
+    /// Main entrypoint for packing bins. 
+    ///
+    /// Requires a `Vec<u32>` representing the sizes of all the bins that will 
+    /// be packed in the bins.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rpack::{Bin, Packing};
+    /// 
+    /// let packages = vec![6, 4, 2, 2, 1, 1, 1, 1, 1];
+    /// let expected = vec![
+    ///     Bin{contents:vec![6]}, 
+    ///     Bin{contents:vec![4, 2]}, 
+    ///     Bin{contents:vec![2, 1, 1, 1, 1]},
+    ///     Bin{contents:vec![1]}
+    /// ];
+    ///
+    /// let mut packing = Packing{bin_size: 6};
+    /// let packed_bins = packing.pack_bins(packages);
+    ///
+    /// assert_eq!(packed_bins, expected);
+    /// ```
     pub fn pack_bins(&mut self, mut packages: Vec<u32>) -> Vec<Bin>{
     	let mut bins: Vec<Bin> = vec![];
 
