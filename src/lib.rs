@@ -1,17 +1,17 @@
 #[derive(Debug, PartialEq)]
-struct Bin {
+pub struct Bin {
     contents: Vec<u32>
 }
 
-fn pack_bins(bin_size: u32, mut packages: Vec<u32>) -> Vec<Bin>{
+pub fn pack_bins(bin_size: u32, mut packages: Vec<u32>) -> Vec<Bin>{
 	let mut bins: Vec<Bin> = vec![];
 	packages.sort_by(|a, b| b.cmp(a));
 
-	if &bin_size < packages.iter().max().unwrap() {
+	if bin_size < *packages.iter().max().unwrap() {
 		panic!("Bin size must be larger than max value.");
 	}
 	
-	while packages.len() > 0 {
+	while !packages.is_empty() {
 
 		let mut initial_bin = Bin{contents: vec![]};
 
@@ -27,7 +27,7 @@ fn pack_bins(bin_size: u32, mut packages: Vec<u32>) -> Vec<Bin>{
 			}
 
 			let after_sum: u32 = initial_bin.contents.iter().sum();
-			if (after_sum == bin_size) | (packages.len() == 0) {
+			if (after_sum == bin_size) | (packages.is_empty()) {
 				bins.push(initial_bin);
 
 				break;
