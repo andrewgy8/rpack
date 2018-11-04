@@ -1,11 +1,28 @@
-/// Bin type for the packing output  
+use std::ops::Add;
+
+/// Bin type represents what something is packed into.  
 ///
-/// Bin.contents contains a `Vec`, representing the contents of that packed bin.
+/// Bin.contents contains a `Vec<Item>`, representing the items of that packed bin.
 #[derive(Debug, PartialEq)]
 pub struct Bin {
-    pub contents: Vec<u32>
+    pub contents: Vec<Item>
 }
 
+/// Item type for the packing  
+///
+/// Size represents the one-dimensional area that the Item consumes.
+#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Copy, Clone)]
+pub struct Item {
+    pub size: u32
+}
+
+impl Add for Item {
+    type Output = u32;
+
+    fn add(self, other: Item) -> u32 {
+        self.size + other.size
+    }
+}
 
 pub struct Packing {
     pub bin_size: u32
@@ -33,132 +50,154 @@ impl Packing {
 
     /// Main entrypoint for packing bins. 
     ///
-    /// Requires a `Vec<u32>` representing the sizes of all the bins that will 
+    /// Requires a `Vec<Item>` representing the sizes of all the bins that will 
     /// be packed in the bins.
     ///
     /// # Examples
     ///
     /// ```
-    /// use rpack::{Bin, Packing};
-    /// 
-    /// let packages = vec![6, 4, 2, 2, 1, 1, 1, 1, 1];
-    /// let expected = vec![
-    ///     Bin{contents:vec![6]}, 
-    ///     Bin{contents:vec![4, 2]}, 
-    ///     Bin{contents:vec![2, 1, 1, 1, 1]},
-    ///     Bin{contents:vec![1]}
+    /// use rpack::{Bin, Packing, Item};
+    /// let items = vec![
+    ///     Item{size: 2}, 
+    ///     Item{size: 4}, 
+    ///     Item{size: 4}, 
+    ///     Item{size: 6}, 
+    ///     Item{size: 1}
     /// ];
-    ///
+    /// let expected = vec![
+    ///     Bin{contents:vec![Item{size: 6}]}, 
+    ///     Bin{contents:vec![Item{size: 4}, Item{size: 2}]}, 
+    ///     Bin{contents:vec![Item{size: 4}, Item{size: 1}]},
+    /// ];
     /// let mut packing = Packing{bin_size: 6};
-    /// let packed_bins = packing.pack_bins(packages);
-    ///
+    /// let packed_bins = packing.pack_items(items);
+    ///    
     /// assert_eq!(packed_bins, expected);
     /// ```
-    pub fn pack_bins(&mut self, mut packages: Vec<u32>) -> Vec<Bin>{
-    	let mut bins: Vec<Bin> = vec![];
+    pub fn pack_items(&mut self, mut packages: Vec<Item>) -> Vec<Bin>{
+        let mut bins: Vec<Bin> = vec![];
 
-    	packages.sort_by(|a, b| b.cmp(a));
+        packages.sort_by(|a, b| b.cmp(&a));
 
-    	if self.bin_size < *packages.iter().max().unwrap() {
-    		panic!("Bin size must be larger than max value.");
-    	}
-    	
-    	while !packages.is_empty() {
+        if self.bin_size < packages.iter().max().unwrap().size {
+            panic!("Bin size must be larger than max value.");
+        }
+        
+        while !packages.is_empty() {
 
-    		let mut initial_bin = Bin{contents: vec![]};
+            let mut initial_bin = Bin{contents: vec![]};
 
-    		for package in packages.clone() {
+            for package in packages.clone() {
 
-    			let res: u32 = initial_bin.contents.iter().sum();
-    			if (res + package) <= self.bin_size {
-    				initial_bin.contents.push(package);
-    				
-    				let pos = packages.iter().position(|&x| x == package).unwrap();
-    				
-    				packages.remove(pos);
-    			}
+                let res: u32 = initial_bin.contents.iter().fold(0,|a, &b| a + b.size);
+                if (res + package.size) <= self.bin_size {
+                    initial_bin.contents.push(package);
+                    
+                    let pos = packages.iter().position(|&x| x == package).unwrap();
+                    
+                    packages.remove(pos);
+                }
 
-    			let after_sum: u32 = initial_bin.contents.iter().sum();
-    			if (after_sum == self.bin_size) | (packages.is_empty()) {
-    				bins.push(initial_bin);
+                let after_sum: u32 = initial_bin.contents.iter().fold(0,|a, &b| a + b.size);
+                if (after_sum == self.bin_size) | (packages.is_empty()) {
+                    bins.push(initial_bin);
 
-    				break;
-    			}
-    		}
-    	}
-    	bins
+                    break;
+                }
+            }
+        }
+        bins
     }
 }
 
 #[cfg(test)]
 mod tests {
     
-    use Packing;
-    use Bin;
+    use super::*;
 
     #[test]
-    fn returns_bins_packed_when_called_with_new_method() {
-        let packages = vec![2, 4, 4, 2, 2, 2, 6, 1, 1, 6, 4, 6, 1, 1];
-        let expected = vec![
-            Bin{contents:vec![6]}, 
-            Bin{contents:vec![6]}, 
-            Bin{contents:vec![6]}, 
-            Bin{contents:vec![4, 2]}, 
-            Bin{contents:vec![4, 2]}, 
-            Bin{contents:vec![4, 2]}, 
-            Bin{contents:vec![2, 1, 1, 1, 1]}
+    fn returns_bins_packed_with_items() {
+        let items = vec![
+            Item{size: 2}, 
+            Item{size: 4}, 
+            Item{size: 4}, 
+            Item{size: 6}, 
+            Item{size: 1}
         ];
-        let mut packing = Packing::new(6);
-        let packed_bins = packing.pack_bins(packages);
+        let expected = vec![
+            Bin{contents:vec![Item{size: 6}]}, 
+            Bin{contents:vec![Item{size: 4}, Item{size: 2}]}, 
+            Bin{contents:vec![Item{size: 4}, Item{size: 1}]},
+        ];
+        let mut packing = Packing{bin_size: 6};
+        let packed_bins = packing.pack_items(items);
         
         assert_eq!(packed_bins, expected);
     }
 
     #[test]
     fn returns_bins_packed_with_best_size() {
-        let packages = vec![2, 4, 4, 2, 2, 2, 6, 1, 1, 6, 4, 6, 1, 1];
+        let packages = vec![
+            Item{size: 4}, 
+            Item{size: 2}, 
+            Item{size: 2}, 
+            Item{size: 2}, 
+            Item{size: 1}, 
+            Item{size: 1}, 
+            Item{size: 4}, 
+            Item{size: 6}, 
+            Item{size: 1}, 
+            Item{size: 1}
+        ];
         let expected = vec![
-        	Bin{contents:vec![6]}, 
-        	Bin{contents:vec![6]}, 
-        	Bin{contents:vec![6]}, 
-        	Bin{contents:vec![4, 2]}, 
-        	Bin{contents:vec![4, 2]}, 
-        	Bin{contents:vec![4, 2]}, 
-        	Bin{contents:vec![2, 1, 1, 1, 1]}
+        	Bin{contents:vec![Item{size: 6}]},  
+        	Bin{contents:vec![Item{size: 4}, Item{size: 2}]}, 
+        	Bin{contents:vec![Item{size: 4}, Item{size: 2}]}, 
+        	Bin{contents:vec![Item{size: 2}, Item{size: 1}, Item{size: 1}, Item{size: 1}, Item{size: 1}]}
         ];
         let mut packing = Packing{bin_size: 6};
-        let packed_bins = packing.pack_bins(packages);
+        let packed_bins = packing.pack_items(packages);
         
         assert_eq!(packed_bins, expected);
     }
 
     #[test]
     fn returns_bins_when_last_bin_is_not_full() {
-        let packages = vec![6, 4, 2, 2, 1, 1, 1, 1, 1];
+        let packages = vec![Item{size: 6}, Item{size: 4}, Item{size: 2}, Item{size: 2}, Item{size: 1}, Item{size: 1}, Item{size: 1}, Item{size: 1}, Item{size: 1}];
         let expected = vec![
-        	Bin{contents:vec![6]}, 
-        	Bin{contents:vec![4, 2]}, 
-        	Bin{contents:vec![2, 1, 1, 1, 1]},
-        	Bin{contents:vec![1]}
+        	Bin{contents:vec![Item{size: 6}]}, 
+        	Bin{contents:vec![Item{size: 4}, Item{size: 2}]}, 
+        	Bin{contents:vec![Item{size: 2}, Item{size: 1}, Item{size: 1}, Item{size: 1}, Item{size: 1}]},
+        	Bin{contents:vec![Item{size: 1}]}
         ];
 
         let mut packing = Packing{bin_size: 6};
-        let packed_bins = packing.pack_bins(packages);
+        let packed_bins = packing.pack_items(packages);
         
         assert_eq!(packed_bins, expected);
     }
 
     #[test]
     fn returns_bin_size_when_last_bin_not_perfect_size() {
-        let packages = vec![6, 4, 2, 2, 1, 1, 1, 1, 1];
+        let packages = vec![
+            Item{size: 6}, 
+            Item{size: 4}, 
+            Item{size: 2}, 
+            Item{size: 2}, 
+            Item{size: 1}, 
+            Item{size: 1}, 
+            Item{size: 1}, 
+            Item{size: 1}, 
+            Item{size: 1}
+        ];
         let expected = vec![
-        	Bin{contents:vec![6, 2]}, 
-        	Bin{contents:vec![4, 2, 1, 1]}, 
-        	Bin{contents:vec![1, 1, 1]}
+        	Bin{contents:vec![Item{size: 6}, Item{size: 2}]}, 
+        	Bin{contents:vec![Item{size: 4}, Item{size: 2}, Item{size: 1}, Item{size: 1}]}, 
+        	Bin{contents:vec![Item{size: 1}, Item{size: 1}, Item{size: 1}]}
         ];
 
         let mut packing = Packing{bin_size: 8};
-        let packed_bins = packing.pack_bins(packages);
+        let packed_bins = packing.pack_items(packages);
         
         assert_eq!(packed_bins, expected);
     }
@@ -166,9 +205,9 @@ mod tests {
     #[test]
     #[should_panic]
     fn panics_when_bin_size_is_smaller_than_largest_given_size() {
-        let packages = vec![6, 4, 2, 2, 1, 1, 1, 1, 1];
+        let packages = vec![Item{size: 6}, Item{size: 1}];
 
         let mut packing = Packing{bin_size: 2};
-        packing.pack_bins(packages);
+        packing.pack_items(packages);
     }
 }
