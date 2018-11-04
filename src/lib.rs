@@ -8,6 +8,23 @@ pub struct Bin {
     pub contents: Vec<Item>
 }
 
+impl Bin {
+
+    /// Constructs a new `Bin` instance 
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rpack::Bin;
+    ///
+    /// let mut bin = Bin::new();
+    /// ```
+    ///
+    pub fn new() -> Bin {
+        Bin{contents: vec![]}
+    }
+}
+
 /// Item type for the packing  
 ///
 /// Size represents the one-dimensional area that the Item consumes.
@@ -85,7 +102,7 @@ impl Packing {
         
         while !packages.is_empty() {
 
-            let mut initial_bin = Bin{contents: vec![]};
+            let mut initial_bin = Bin::new();
 
             for package in packages.clone() {
 
@@ -203,11 +220,11 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
+    #[should_panic(expected="Bin size must be larger than max value.")]
     fn panics_when_bin_size_is_smaller_than_largest_given_size() {
         let packages = vec![Item{size: 6}, Item{size: 1}];
-
         let mut packing = Packing{bin_size: 2};
+
         packing.pack_items(packages);
     }
 }
