@@ -5,18 +5,7 @@
 
 ## Usage
 
-	let packages = vec![6, 4, 2, 2, 1, 1, 1, 1, 1];
-    let expected = vec![
-    	Bin{contents:vec![6]}, 
-    	Bin{contents:vec![4, 2]}, 
-    	Bin{contents:vec![2, 1, 1, 1, 1]},
-    	Bin{contents:vec![1]}
-    ];
-
-    let mut packing = Packing{bin_size: 6};
-    let packed_bins = packing.pack_bins(packages);
-    
-    assert_eq!(packed_bins, expected);
+Please see [the official docs](https://docs.rs/rpack/) for usage.
 
 ## Running the tests
 

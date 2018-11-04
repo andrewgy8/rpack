@@ -1,6 +1,6 @@
 [package]
 name = "rpack"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Andrew Graham-Yooll <andrewgy8@gmail.com>"]
 description = "Packing algorithm implmentation"
 license-file = "LICENSE.md"
