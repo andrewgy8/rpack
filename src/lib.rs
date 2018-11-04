@@ -3,7 +3,7 @@ use std::ops::Add;
 /// Bin type represents what something is packed into.  
 ///
 /// Bin.contents contains a `Vec<Item>`, representing the items of that packed bin.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Default, PartialEq)]
 pub struct Bin {
     pub contents: Vec<Item>
 }
