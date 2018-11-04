@@ -11,20 +11,6 @@ script:
   - cargo build --verbose --all
   - cargo test --verbose --all
 
-deploy:
-  provider: releases
-  skip_cleanup: true
-  on:
-    tags: true
-    all_branches: true
-
-before_deploy:
-  - cargo doc
-  - cargo package
-
-after_deploy:
-  - cargo publish --token "$CRATES_IO_TOKEN"
-
 matrix:
   allow_failures:
     - rust: nightly
