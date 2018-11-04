@@ -6,5 +6,15 @@ description = "Packing algorithm implmentation"
 license-file = "LICENSE.md"
 homepage = "https://github.com/andrewgy8/rpack"
 repository = "https://github.com/andrewgy8/rpack"
+include = [
+    "Cargo.toml",
+    "src/**/*",
+    "tests/**/*",
+    "examples/**/*",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+]
 
 [dependencies]
